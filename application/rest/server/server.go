@@ -9,6 +9,11 @@ import (
 	"github.com/spf13/viper"
 )
 
+var PROBS_URL string = "/probs"
+var BASE_URL string = "/"
+
+const BASE_PATH string = "/v1"
+
 type HttpServer struct {
 	router      *mux.Router
 	userHandler *handlers.UserHandler
@@ -27,12 +32,12 @@ func New(userHandler *handlers.UserHandler, config *viper.Viper, log *golog.Logg
 
 func (s *HttpServer) InitRouter() {
 
-	fileServer := http.FileServer(http.Dir("./hci/static/"))
-	s.router.PathPrefix("/static/").Handler(http.StripPrefix("/static/", fileServer))
+	api := s.router.PathPrefix(BASE_PATH).Subrouter()
+	//api.Use(mid.ValidateRequestMiddleware)
 
-	s.router.HandleFunc("/", s.snipHandler.Home).Methods("GET")
-	s.router.HandleFunc("/snip/view", s.snipHandler.SnipView).Methods("GET")
-	s.router.HandleFunc("/snip/create", s.snipHandler.SnipCreate).Methods("POST")
+	api.HandleFunc("/users", s.userHandler.AddUser).Methods(http.MethodPost)
+	//api.HandleFunc("/tokens", s.userHandler.CreateToken).Methods(http.MethodPost)
+
 }
 
 func (s *HttpServer) Start() {
