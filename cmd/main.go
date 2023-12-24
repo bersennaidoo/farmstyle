@@ -16,8 +16,10 @@ func main() {
 	cfg := config.New(filename)
 	mclient := dbc.New(cfg)
 	usrepo := mongo.NewUserRepository(mclient)
-	h := handlers.NewUserHandler(usrepo, log)
-	srv := server.New(h, cfg, log)
+	rvrepo := mongo.NewReviewsRepository(mclient)
+	uh := handlers.NewUserHandler(usrepo, log)
+	rh := handlers.NewReviewsHandler(rvrepo, log)
+	srv := server.New(uh, rh, cfg, log)
 	srv.InitRouter()
 
 	log.Info("Starting the application...")

@@ -15,18 +15,20 @@ var BASE_URL string = "/"
 const BASE_PATH string = "/v1"
 
 type HttpServer struct {
-	router      *mux.Router
-	userHandler *handlers.UserHandler
-	config      *viper.Viper
-	log         *golog.Logger
+	router         *mux.Router
+	userHandler    *handlers.UserHandler
+	reviewshandler *handlers.ReviewsHandler
+	config         *viper.Viper
+	log            *golog.Logger
 }
 
-func New(userHandler *handlers.UserHandler, config *viper.Viper, log *golog.Logger) *HttpServer {
+func New(userHandler *handlers.UserHandler, reviewshandler *handlers.ReviewsHandler, config *viper.Viper, log *golog.Logger) *HttpServer {
 	return &HttpServer{
-		router:      mux.NewRouter(),
-		userHandler: userHandler,
-		config:      config,
-		log:         log,
+		router:         mux.NewRouter(),
+		userHandler:    userHandler,
+		reviewshandler: reviewshandler,
+		config:         config,
+		log:            log,
 	}
 }
 
@@ -37,6 +39,9 @@ func (s *HttpServer) InitRouter() {
 
 	api.HandleFunc("/users", s.userHandler.AddUser).Methods(http.MethodPost)
 	//api.HandleFunc("/tokens", s.userHandler.CreateToken).Methods(http.MethodPost)
+
+	api.HandleFunc("/reviews", s.reviewshandler.GetReviews).Methods(http.MethodGet)
+	api.HandleFunc("/reviews", s.reviewshandler.AddReview).Methods(http.MethodPost)
 
 }
 

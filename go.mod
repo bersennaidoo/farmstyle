@@ -3,6 +3,7 @@ module github.com/bersennaidoo/farmstyle
 go 1.21.0
 
 require (
+	github.com/google/uuid v1.4.0
 	github.com/gorilla/mux v1.8.1
 	github.com/kataras/golog v0.1.11
 	github.com/spf13/viper v1.18.2

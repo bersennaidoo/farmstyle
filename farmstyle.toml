@@ -9,6 +9,10 @@ connection_string = "mongodb://localhost:27017"
 
 [http]
 
+base_url = "/"
+
+probs_url = "/probs"
+
 http_addr = ":3000"
 
 [https]
