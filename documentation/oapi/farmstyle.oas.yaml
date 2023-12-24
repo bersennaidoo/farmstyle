@@ -170,7 +170,7 @@ paths:
                 properties:
                   type:
                     type: string
-                    example: https://farmstall.designapis.com/probs/invalid-body
+                    example: https://farmstyle.example.com/problems/invalid-body
                   title:
                     type: string
                     example: Request body failed validation
