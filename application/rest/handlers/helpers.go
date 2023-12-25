@@ -5,15 +5,15 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/bersennaidoo/farmstyle/application/rest/problems"
+	"github.com/bersennaidoo/farmstyle/foundation/emsg"
 )
 
 type MiddlewareFn func(http.ResponseWriter, *http.Request)
 
-func ErrorResponse(prob *problems.ProblemJson) MiddlewareFn {
+func ErrorResponse(prob *emsg.ProblemJson) MiddlewareFn {
 	return func(w http.ResponseWriter, r *http.Request) {
 		log.Println(prob.Error())
-		prob := problems.Absolutify(prob, "/probs", "/")
+		prob := emsg.Absolutify(prob, "/probs", "/")
 		writeJson(prob.Status, prob)(w, r)
 	}
 }

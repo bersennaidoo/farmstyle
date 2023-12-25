@@ -6,8 +6,8 @@ import (
 	"net/http"
 	"strconv"
 
-	"github.com/bersennaidoo/farmstyle/application/rest/problems"
 	"github.com/bersennaidoo/farmstyle/domain/models"
+	"github.com/bersennaidoo/farmstyle/foundation/emsg"
 	"github.com/bersennaidoo/farmstyle/infrastructure/repositories/mongo"
 	"github.com/kataras/golog"
 )
@@ -28,7 +28,7 @@ func (rh *ReviewsHandler) GetReviews(w http.ResponseWriter, r *http.Request) {
 	query := r.URL.Query()
 	maxRating := query.Get("maxRating")
 	log.Printf("\nmaxRating: %s\n", maxRating)
-	var reviewList *[]models.Review
+	var reviewList []models.Review
 	if maxRating != "" {
 		i, _ := strconv.Atoi(maxRating)
 		filters := models.ReviewFilters{
@@ -46,7 +46,7 @@ func (rh *ReviewsHandler) AddReview(w http.ResponseWriter, r *http.Request) {
 	var review models.Review
 	err := decoder.Decode(&review)
 	if err != nil {
-		ErrorResponse(problems.FailedToParseJson(problems.ProblemJson{
+		ErrorResponse(emsg.FailedToParseJson(emsg.ProblemJson{
 			Detail: err.Error(),
 		}))(w, r)
 		return

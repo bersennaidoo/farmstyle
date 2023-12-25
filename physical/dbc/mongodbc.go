@@ -27,11 +27,6 @@ func New(config *viper.Viper) *mongo.Client {
 	}
 
 	log.Println("Connected to MongoDB")
-	defer func() {
-		if err = client.Disconnect(ctx); err != nil {
-			panic(err)
-		}
-	}()
 
 	return client
 }

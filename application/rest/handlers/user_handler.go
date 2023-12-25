@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/bersennaidoo/farmstyle/application/rest/problems"
 	"github.com/bersennaidoo/farmstyle/domain/models"
+	"github.com/bersennaidoo/farmstyle/foundation/emsg"
 	"github.com/bersennaidoo/farmstyle/infrastructure/repositories/mongo"
 	"github.com/kataras/golog"
 )
@@ -27,14 +27,14 @@ func (u *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	var user models.NewUser
 	err := decoder.Decode(&user)
 	if err != nil {
-		ErrorResponse(problems.FailedToParseJson(problems.ProblemJson{
+		ErrorResponse(emsg.FailedToParseJson(emsg.ProblemJson{
 			Detail: err.Error(),
 		}))(w, r)
 		return
 	}
 	res, createErr := u.userRepository.AddUser(user)
 	if createErr != nil {
-		ErrorResponse(createErr.(*problems.ProblemJson))(w, r)
+		ErrorResponse(createErr.(*emsg.ProblemJson))(w, r)
 		return
 	}
 	writeJson(201, res)(w, r)

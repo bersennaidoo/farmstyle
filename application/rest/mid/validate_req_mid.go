@@ -1,3 +1,14 @@
+package mid
+
+import (
+	"context"
+	"log"
+	"net/http"
+
+	"github.com/bersennaidoo/farmstyle/foundation/emsg"
+	"github.com/getkin/kin-openapi/openapi3filter"
+)
+
 func ValidateRequestMiddleware(next http.Handler) http.Handler {
 	return http.StripPrefix("/v1", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 
@@ -23,7 +34,7 @@ func ValidateRequestMiddleware(next http.Handler) http.Handler {
 		if err := openapi3filter.ValidateRequest(something, requestValidationInput); err != nil {
 			switch errVal := err.(type) {
 			case *openapi3filter.RequestError:
-				ErrorResponse(problems.InvalidBody(problems.ProblemJson{
+				ErrorResponse(emsg.InvalidBody(emsg.ProblemJson{
 					Detail: errVal.Reason,
 				}))(w, r)
 				return
@@ -32,7 +43,7 @@ func ValidateRequestMiddleware(next http.Handler) http.Handler {
 				log.Printf("errVal %s", errVal)
 				break
 			default:
-				ErrorResponse(problems.InvalidRequest(problems.ProblemJson{}))(w, r)
+				ErrorResponse(emsg.InvalidRequest(emsg.ProblemJson{}))(w, r)
 				return
 			}
 		}

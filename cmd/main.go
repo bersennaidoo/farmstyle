@@ -1,6 +1,8 @@
 package main
 
 import (
+	"context"
+
 	"github.com/bersennaidoo/farmstyle/application/rest/handlers"
 	"github.com/bersennaidoo/farmstyle/application/rest/server"
 	"github.com/bersennaidoo/farmstyle/infrastructure/repositories/mongo"
@@ -25,4 +27,9 @@ func main() {
 	log.Info("Starting the application...")
 	srv.Start()
 
+	defer func() {
+		if err := mclient.Disconnect(context.Background()); err != nil {
+			panic(err)
+		}
+	}()
 }
