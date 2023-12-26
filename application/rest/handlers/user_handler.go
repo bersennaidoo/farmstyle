@@ -39,3 +39,24 @@ func (u *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	}
 	writeJson(201, res)(w, r)
 }
+
+func (u *UserHandler) CreateToken(w http.ResponseWriter, r *http.Request) {
+	decoder := json.NewDecoder(r.Body)
+	var user models.UserLogin
+	err := decoder.Decode(&user)
+	if err != nil {
+		ErrorResponse(emsg.FailedToParseJson(emsg.ProblemJson{
+			Detail: err.Error(),
+		}))(w, r)
+		return
+	}
+	res, tokenErr := u.userRepository.CreateToken(user)
+	if tokenErr != nil {
+		ErrorResponse(tokenErr.(*emsg.ProblemJson))(w, r)
+		return
+	}
+	tokenResp := TokenResponse{
+		Token: res,
+	}
+	writeJson(201, tokenResp)(w, r)
+}

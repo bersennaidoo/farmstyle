@@ -4,6 +4,14 @@ import (
 	"fmt"
 )
 
+type PasswordError struct {
+	Msg string
+}
+
+func (p *PasswordError) Error() string {
+	return p.Msg
+}
+
 type ProblemJson struct {
 	Type       string `json:"type"`
 	Title      string `json:"title"`

@@ -4,7 +4,10 @@ import (
 	"context"
 
 	"github.com/bersennaidoo/farmstyle/application/rest/handlers"
+	"github.com/bersennaidoo/farmstyle/application/rest/mid"
 	"github.com/bersennaidoo/farmstyle/application/rest/server"
+	"github.com/bersennaidoo/farmstyle/foundation/token"
+	"github.com/bersennaidoo/farmstyle/foundation/util"
 	"github.com/bersennaidoo/farmstyle/infrastructure/repositories/mongo"
 	"github.com/bersennaidoo/farmstyle/physical/config"
 	"github.com/bersennaidoo/farmstyle/physical/dbc"
@@ -17,11 +20,13 @@ func main() {
 	filename := config.GetConfigFileName()
 	cfg := config.New(filename)
 	mclient := dbc.New(cfg)
-	usrepo := mongo.NewUserRepository(mclient)
+	pmaker, _ := token.NewPasetoMaker(util.RandomString(32))
+	usrepo := mongo.NewUserRepository(mclient, pmaker)
 	rvrepo := mongo.NewReviewsRepository(mclient)
 	uh := handlers.NewUserHandler(usrepo, log)
 	rh := handlers.NewReviewsHandler(rvrepo, log)
-	srv := server.New(uh, rh, cfg, log)
+	m := mid.New(log, pmaker)
+	srv := server.New(uh, rh, cfg, log, m)
 	srv.InitRouter()
 
 	log.Info("Starting the application...")
