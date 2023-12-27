@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"log"
 
 	"github.com/bersennaidoo/farmstyle/application/rest/handlers"
 	"github.com/bersennaidoo/farmstyle/application/rest/mid"
@@ -12,9 +13,19 @@ import (
 	"github.com/bersennaidoo/farmstyle/physical/config"
 	"github.com/bersennaidoo/farmstyle/physical/dbc"
 	"github.com/bersennaidoo/farmstyle/physical/logger"
+	"github.com/bersennaidoo/farmstyle/physical/otelem"
 )
 
 func main() {
+	tp, err := otelem.InitTracer()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func() {
+		if err := tp.Shutdown(context.Background()); err != nil {
+			log.Printf("Error shutting down tracer provider: %v", err)
+		}
+	}()
 
 	log := logger.New()
 	filename := config.GetConfigFileName()

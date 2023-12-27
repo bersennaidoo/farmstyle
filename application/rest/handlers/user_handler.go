@@ -8,7 +8,12 @@ import (
 	"github.com/bersennaidoo/farmstyle/foundation/emsg"
 	"github.com/bersennaidoo/farmstyle/infrastructure/repositories/mongo"
 	"github.com/kataras/golog"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/attribute"
+	oteltrace "go.opentelemetry.io/otel/trace"
 )
+
+var tracer = otel.Tracer("user-handlers")
 
 type UserHandler struct {
 	userRepository *mongo.UserRepository
@@ -55,6 +60,9 @@ func (u *UserHandler) CreateToken(w http.ResponseWriter, r *http.Request) {
 		ErrorResponse(tokenErr.(*emsg.ProblemJson))(w, r)
 		return
 	}
+	_, span := tracer.Start(r.Context(), "CreateToken",
+		oteltrace.WithAttributes(attribute.String("token", res)))
+	defer span.End()
 	tokenResp := TokenResponse{
 		Token: res,
 	}

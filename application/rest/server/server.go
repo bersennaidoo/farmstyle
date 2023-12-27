@@ -8,6 +8,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/kataras/golog"
 	"github.com/spf13/viper"
+	"go.opentelemetry.io/contrib/instrumentation/github.com/gorilla/mux/otelmux"
 )
 
 var PROBS_URL string = "/probs"
@@ -40,10 +41,11 @@ func (s *HttpServer) InitRouter() {
 	auth := s.router.PathPrefix(BASE_PATH).Subrouter()
 	api := s.router.PathPrefix(BASE_PATH).Subrouter()
 
+	api.Use(otelmux.Middleware("farmstyle"))
 	api.HandleFunc("/users", s.userHandler.AddUser).Methods(http.MethodPost)
 	api.HandleFunc("/tokens", s.userHandler.CreateToken).Methods(http.MethodPost)
 
-	auth.Use(s.mid.Authorization)
+	auth.Use(s.mid.Authorization, otelmux.Middleware("farmstyle"))
 
 	auth.HandleFunc("/reviews", s.reviewshandler.GetReviews).Methods(http.MethodGet)
 	auth.HandleFunc("/reviews", s.reviewshandler.AddReview).Methods(http.MethodPost)
